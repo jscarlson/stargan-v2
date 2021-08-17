@@ -161,6 +161,11 @@ class Solver(nn.Module):
                 log += ' '.join(['%s: [%.4f]' % (key, value) for key, value in all_losses.items()])
                 print(log)
 
+                # tensorboard write
+                for key, value in all_losses.items():
+                    writer.add_scalar(key, value, i)
+                writer.flush()
+
             # generate images for debugging
             if (i+1) % args.sample_every == 0:
                 os.makedirs(args.sample_dir, exist_ok=True)
@@ -174,12 +179,6 @@ class Solver(nn.Module):
             if (i+1) % args.eval_every == 0:
                 calculate_metrics(nets_ema, args, i+1, mode='latent')
                 calculate_metrics(nets_ema, args, i+1, mode='reference')
-
-            # tensorboard write
-            for key, value in all_losses.items():
-                writer.add_scalar(key, value, i)
-
-        writer.flush()
 
     @torch.no_grad()
     def sample(self, loaders):
