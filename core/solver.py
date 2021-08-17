@@ -24,6 +24,8 @@ from core.data_loader import InputFetcher
 import core.utils as utils
 from metrics.eval import calculate_metrics
 
+from torch.utils.tensorboard import SummaryWriter
+
 
 class Solver(nn.Module):
     def __init__(self, args):
@@ -81,6 +83,9 @@ class Solver(nn.Module):
         nets = self.nets
         nets_ema = self.nets_ema
         optims = self.optims
+
+        # set up summary writer
+        writer = SummaryWriter()
 
         # fetch random validation images for debugging
         fetcher = InputFetcher(loaders.src, loaders.ref, args.latent_dim, 'train')
@@ -169,6 +174,12 @@ class Solver(nn.Module):
             if (i+1) % args.eval_every == 0:
                 calculate_metrics(nets_ema, args, i+1, mode='latent')
                 calculate_metrics(nets_ema, args, i+1, mode='reference')
+
+            # tensorboard write
+            for key, value in all_losses.items():
+                writer.add_scalar(key, value, i)
+
+        writer.flush()
 
     @torch.no_grad()
     def sample(self, loaders):
