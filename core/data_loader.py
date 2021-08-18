@@ -171,8 +171,8 @@ def get_test_loader(root, img_size=256, batch_size=32,
     """
 
     transform = transforms.Compose([
-        # transforms.RandomCrop(img_size),
-        transforms.Resize([img_size, 2*img_size]),
+        transforms.RandomCrop(img_size),
+        # transforms.Resize(img_size),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.5, 0.5, 0.5],
                              std=[0.5, 0.5, 0.5]),
