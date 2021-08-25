@@ -23,6 +23,7 @@ from core.checkpoint import CheckpointIO
 from core.data_loader import InputFetcher
 import core.utils as utils
 from metrics.eval import calculate_metrics
+from core.inference import inference_from_latent
 
 from torch.utils.tensorboard import SummaryWriter
 
@@ -206,6 +207,13 @@ class Solver(nn.Module):
         self._load_checkpoint(args.resume_iter)
         calculate_metrics(nets_ema, args, step=resume_iter, mode='latent')
         calculate_metrics(nets_ema, args, step=resume_iter, mode='reference')
+
+    @torch.no_grad()
+    def infer(self):
+        args = self.args
+        nets_ema = self.nets_ema
+        self._load_checkpoint(args.resume_iter)
+        inference_from_latent(nets_ema, args)
 
 
 def compute_d_loss(nets, args, x_real, y_org, y_trg, z_trg=None, x_ref=None, masks=None):

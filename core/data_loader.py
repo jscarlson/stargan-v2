@@ -157,6 +157,34 @@ def get_eval_loader(root, img_size=256, batch_size=32,
                            drop_last=drop_last)
 
 
+def get_inf_loader(root, img_size=256, batch_size=32,
+                    imagenet_normalize=True, shuffle=True,
+                    num_workers=4, drop_last=False):
+    print('Preparing DataLoader for the inference phase...')
+    if imagenet_normalize:
+        height, width = 299, 299
+        mean = [0.485, 0.456, 0.406]
+        std = [0.229, 0.224, 0.225]
+    else:
+        height, width = img_size, img_size
+        mean = [0.5, 0.5, 0.5]
+        std = [0.5, 0.5, 0.5]
+
+    transform = transforms.Compose([
+        transforms.Resize(img_size),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=mean, std=std)
+    ])
+
+    dataset = DefaultDataset(root, transform=transform)
+    return data.DataLoader(dataset=dataset,
+                           batch_size=batch_size,
+                           shuffle=shuffle,
+                           num_workers=num_workers,
+                           pin_memory=True,
+                           drop_last=drop_last)
+
+
 def get_test_loader(root, img_size=256, batch_size=32,
                     shuffle=True, num_workers=4):
     print('Preparing DataLoader for the generation phase...')
