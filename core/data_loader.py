@@ -171,7 +171,7 @@ def get_inf_loader(root, img_size=256, batch_size=32,
         std = [0.5, 0.5, 0.5]
 
     transform = transforms.Compose([
-        # transforms.Resize(img_size),
+        transforms.Resize(img_size),
         transforms.ToTensor(),
         transforms.Normalize(mean=mean, std=std)
     ])
