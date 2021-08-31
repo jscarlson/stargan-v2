@@ -26,6 +26,10 @@ def inference_from_latent(nets, args):
         for src_idx, src_domain in enumerate(src_domains):
 
             path_src = os.path.join(args.val_img_dir, src_domain)
+
+            if len(os.listdir(path_src)) == 0:
+                continue
+            
             loader_src = get_inf_loader(root=path_src,
                                         img_size=args.img_size,
                                         batch_size=args.val_batch_size,
