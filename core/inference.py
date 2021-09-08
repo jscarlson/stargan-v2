@@ -45,6 +45,7 @@ def inference_from_latent(nets, args):
             for i, batch in enumerate(tqdm(loader_src, total=len(loader_src))):
 
                 x_src, fnames = batch
+                print(fnames)
                 N = x_src.size(0)
                 x_src = x_src.to(device)
                 y_trg = torch.tensor([trg_idx] * N).to(device)
