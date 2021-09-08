@@ -60,11 +60,7 @@ class FilePathDataset(data.Dataset):
         img = Image.open(fname).convert('RGB')
         if self.transform is not None:
             img = self.transform(img)
-        sample = { 
-            'images' : img,
-            'fnames' : fname
-        }
-        return sample
+        return (img + (fname,))
 
     def __len__(self):
         return len(self.samples)
