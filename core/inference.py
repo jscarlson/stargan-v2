@@ -42,8 +42,9 @@ def inference_from_latent(nets, args):
 
             print('Generating images for %s...' % task)
 
-            for i, x_src in enumerate(tqdm(loader_src, total=len(loader_src))):
+            for i, batch in enumerate(tqdm(loader_src, total=len(loader_src))):
 
+                x_src, fnames = batch
                 N = x_src.size(0)
                 x_src = x_src.to(device)
                 y_trg = torch.tensor([trg_idx] * N).to(device)
@@ -64,5 +65,5 @@ def inference_from_latent(nets, args):
                     for k in range(N):
                         filename = os.path.join(
                             path_fake,
-                            '%.4i_%.2i.png' % (i*args.val_batch_size+(k+1), j+1))
+                            f'{i*args.val_batch_size+(k+1)}_{j+1}_{fnames[k]}.png')
                         utils.save_image(x_fake[k], ncol=1, filename=filename)

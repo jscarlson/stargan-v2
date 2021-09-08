@@ -48,6 +48,24 @@ class DefaultDataset(data.Dataset):
         return len(self.samples)
 
 
+class FilePathDataset(data.Dataset):
+    def __init__(self, root, transform=None):
+        self.samples = listdir(root)
+        self.samples.sort()
+        self.transform = transform
+        self.targets = None
+
+    def __getitem__(self, index):
+        fname = self.samples[index]
+        img = Image.open(fname).convert('RGB')
+        if self.transform is not None:
+            img = self.transform(img)
+        return img, fname
+
+    def __len__(self):
+        return len(self.samples)
+
+
 class ReferenceDataset(data.Dataset):
     def __init__(self, root, transform=None):
         self.samples, self.targets = self._make_dataset(root)
@@ -176,7 +194,7 @@ def get_inf_loader(root, img_size=256, batch_size=32,
         transforms.Normalize(mean=mean, std=std)
     ])
 
-    dataset = DefaultDataset(root, transform=transform)
+    dataset = FilePathDataset(root, transform=transform)
     return data.DataLoader(dataset=dataset,
                            batch_size=batch_size,
                            shuffle=shuffle,
